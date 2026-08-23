@@ -20,6 +20,7 @@ public class ECommerceApplication {
 
     public static void main(String[] args) {
         logger.info("=== STARTUP ENV INFO ===");
+        logger.info("TEST_VAR env: {}", System.getenv("TEST_VAR"));
         logger.info("MYSQLHOST env: {}", System.getenv("MYSQLHOST"));
         logger.info("MYSQLPORT env: {}", System.getenv("MYSQLPORT"));
         logger.info("MYSQLDATABASE env: {}", System.getenv("MYSQLDATABASE"));
