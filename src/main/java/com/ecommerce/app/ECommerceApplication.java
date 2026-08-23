@@ -21,11 +21,14 @@ public class ECommerceApplication {
     public static void main(String[] args) {
         logger.info("=== STARTUP ENV INFO ===");
         logger.info("TEST_VAR env: {}", System.getenv("TEST_VAR"));
-        logger.info("MYSQLHOST env: {}", System.getenv("MYSQLHOST"));
-        logger.info("MYSQL_HOST env: {}", System.getenv("MYSQL_HOST"));
-        logger.info("MYSQLPORT env: {}", System.getenv("MYSQLPORT"));
-        logger.info("MYSQLDATABASE env: {}", System.getenv("MYSQLDATABASE"));
-        logger.info("MYSQLUSER env: {}", System.getenv("MYSQLUSER"));
+        
+        // Scan all env keys containing MYSQL, HOST, or PORT
+        System.getenv().forEach((k, v) -> {
+            if (k.toUpperCase().contains("MYSQL") || k.toUpperCase().contains("HOST") || k.toUpperCase().contains("PORT")) {
+                logger.info("Env Key Match: [{}] = [{}]", k, k.toUpperCase().contains("PASSWORD") || k.toUpperCase().contains("SECRET") ? "***" : v);
+            }
+        });
+        
         SpringApplication.run(ECommerceApplication.class, args);
     }
 
