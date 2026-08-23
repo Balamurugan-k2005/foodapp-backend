@@ -1,0 +1,15 @@
+package com.ecommerce.app.repository;
+
+import com.ecommerce.app.entity.Product;
+import com.ecommerce.app.entity.Review;
+import com.ecommerce.app.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+    Page<Review> findByProductId(Long productId, Pageable pageable);
+    boolean existsByUserAndProduct(User user, Product product);
+}
