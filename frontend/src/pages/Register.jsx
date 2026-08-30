@@ -45,9 +45,9 @@ const Register = () => {
     <div className="container-fluid auth-bg d-flex align-items-center justify-content-center" style={{ minHeight: '90vh' }}>
       <div className="card shadow-lg border-0 p-4 m-3" style={{ width: '100%', maxWidth: '485px', borderRadius: '16px' }}>
         <div className="text-center mb-4">
-          <i className="bi bi-person-plus text-primary fs-1"></i>
+          <i className="bi bi-bicycle text-primary fs-1"></i>
           <h2 className="fw-bold mt-2 text-dark">Create Account</h2>
-          <p className="text-muted small">Sign up to start shopping on NexuraShop</p>
+          <p className="text-muted small">Sign up to start ordering on BiteSpeed</p>
         </div>
 
         {error && (

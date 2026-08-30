@@ -61,13 +61,24 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         <h6 className="fw-bold text-dark mb-1 small text-truncate" style={{ maxWidth: '180px' }}>
                           {item.productName}
                         </h6>
-                        <span className="text-primary fw-bold small d-block mb-2">${item.productPrice.toFixed(2)}</span>
+                        <span className="text-primary fw-bold small d-block mb-2">₹{item.productPrice.toFixed(2)}</span>
                         
                         <div className="d-flex align-items-center justify-content-between">
                           {/* Decrement / Increment */}
-                          <div className="input-group input-group-sm" style={{ width: '90px' }}>
+                          <div
+                            className="d-flex align-items-center justify-content-between rounded-3 shadow-sm"
+                            style={{
+                              background: '#ffffff',
+                              border: '1.5px solid #a5d6a7',
+                              width: '85px',
+                              height: '30px',
+                              fontSize: '0.85rem',
+                              padding: '0 6px',
+                            }}
+                          >
                             <button
-                              className="btn btn-outline-secondary btn-sm bg-light py-0 border-0"
+                              className="btn btn-sm text-success p-0 border-0 fw-extrabold d-flex align-items-center justify-content-center"
+                              style={{ width: '20px', height: '20px' }}
                               onClick={() => {
                                 if (item.quantity > 1) {
                                   updateQuantity(item.productId, item.quantity - 1);
@@ -76,16 +87,12 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                 }
                               }}
                             >
-                              <i className="bi bi-minus"></i>
+                              <i className="bi bi-dash"></i>
                             </button>
-                            <input
-                              type="number"
-                              className="form-control text-center bg-light border-0 py-0 text-dark small"
-                              value={item.quantity}
-                              readOnly
-                            />
+                            <span className="fw-bold text-success mx-1">{item.quantity}</span>
                             <button
-                              className="btn btn-outline-secondary btn-sm bg-light py-0 border-0"
+                              className="btn btn-sm text-success p-0 border-0 fw-extrabold d-flex align-items-center justify-content-center"
+                              style={{ width: '20px', height: '20px' }}
                               onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                             >
                               <i className="bi bi-plus"></i>
@@ -114,7 +121,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
             <div className="p-3 bg-white border-top shadow-lg">
               <div className="d-flex align-items-center justify-content-between mb-3">
                 <span className="fw-semibold text-muted small">Cart Subtotal:</span>
-                <span className="fs-4 fw-bold text-dark">${cart.totalAmount.toFixed(2)}</span>
+                <span className="fs-4 fw-bold text-dark">₹{cart.totalAmount.toFixed(2)}</span>
               </div>
               <button
                 onClick={handleCheckoutRedirect}
