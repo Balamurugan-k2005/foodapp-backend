@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = "https://foodapp-backend-production-b418.up.railway.app";
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
@@ -22,13 +22,13 @@ export const getAccessToken = () => accessToken;
 axiosInstance.interceptors.request.use(
   (config) => {
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 let isRefreshing = false;
@@ -55,16 +55,16 @@ axiosInstance.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url.includes('/api/auth/login') &&
-      !originalRequest.url.includes('/api/auth/register') &&
-      !originalRequest.url.includes('/api/auth/refresh-token')
+      !originalRequest.url.includes("/api/auth/login") &&
+      !originalRequest.url.includes("/api/auth/register") &&
+      !originalRequest.url.includes("/api/auth/refresh-token")
     ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
             return axiosInstance(originalRequest);
           })
           .catch((err) => Promise.reject(err));
@@ -73,26 +73,30 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const storedRefreshToken = localStorage.getItem('refreshToken');
+      const storedRefreshToken = localStorage.getItem("refreshToken");
       if (!storedRefreshToken) {
         isRefreshing = false;
         return Promise.reject(error);
       }
 
       try {
-        const response = await axios.post(`${API_BASE_URL}/api/auth/refresh-token`, {
-          refreshToken: storedRefreshToken,
-        });
+        const response = await axios.post(
+          `${API_BASE_URL}/api/auth/refresh-token`,
+          {
+            refreshToken: storedRefreshToken,
+          },
+        );
 
         if (response.data && response.data.success) {
           const newAccessToken = response.data.data.accessToken;
           const newRefreshToken = response.data.data.refreshToken;
 
           setAccessToken(newAccessToken);
-          localStorage.setItem('refreshToken', newRefreshToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
 
-          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          axiosInstance.defaults.headers.common["Authorization"] =
+            `Bearer ${newAccessToken}`;
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
           processQueue(null, newAccessToken);
           isRefreshing = false;
@@ -102,15 +106,15 @@ axiosInstance.interceptors.response.use(
         processQueue(refreshError, null);
         isRefreshing = false;
         // Clean session and dispatch event to force login redirection
-        localStorage.removeItem('refreshToken');
+        localStorage.removeItem("refreshToken");
         setAccessToken(null);
-        window.dispatchEvent(new Event('auth-expired'));
+        window.dispatchEvent(new Event("auth-expired"));
         return Promise.reject(refreshError);
       }
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;

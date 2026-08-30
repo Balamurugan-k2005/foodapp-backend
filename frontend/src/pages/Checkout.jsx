@@ -82,7 +82,7 @@ const Checkout = () => {
           return;
         }
         if (coupon.minOrderAmount && subtotal < coupon.minOrderAmount) {
-          setCouponError(`Minimum order amount of $${coupon.minOrderAmount} is required for this coupon.`);
+          setCouponError(`Minimum order amount of ₹${coupon.minOrderAmount} is required for this coupon.`);
           return;
         }
         setAppliedCoupon(coupon);
@@ -133,6 +133,50 @@ const Checkout = () => {
       setCheckoutError('Please select a shipping address.');
       return;
     }
+
+    if (paymentMethod === 'CARD') {
+      const cleanCardNum = cardNumber.replace(/\s+/g, '');
+      const numRegex = /^\d+$/;
+
+      if (!cleanCardNum) {
+        setCheckoutError('Please enter your card number.');
+        return;
+      }
+      if (!numRegex.test(cleanCardNum) || cleanCardNum.length < 15 || cleanCardNum.length > 16) {
+        setCheckoutError('Invalid card number. Must be a 15 or 16-digit numeric card number.');
+        return;
+      }
+
+      if (!cardExpiry.trim()) {
+        setCheckoutError('Please enter your card expiry date.');
+        return;
+      }
+
+      const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+      if (!expiryRegex.test(cardExpiry.trim())) {
+        setCheckoutError('Invalid expiry date format. Please use MM/YY (e.g., 12/28).');
+        return;
+      }
+
+      const [expMonth, expYear] = cardExpiry.split('/').map(Number);
+      const now = new Date();
+      const currentYear = now.getFullYear() % 100;
+      const currentMonth = now.getMonth() + 1;
+      if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+        setCheckoutError('Card has expired. Please use a valid card.');
+        return;
+      }
+
+      if (!cardCvv.trim()) {
+        setCheckoutError('Please enter your card CVV.');
+        return;
+      }
+      if (!/^\d{3,4}$/.test(cardCvv.trim())) {
+        setCheckoutError('Invalid CVV. Must be a 3 or 4-digit CVV number.');
+        return;
+      }
+    }
+
     setCheckoutError('');
     setProcessing(true);
 
@@ -175,7 +219,7 @@ const Checkout = () => {
             </div>
             <div className="d-flex justify-content-between mb-2 small">
               <span className="text-muted">Total Charged:</span>
-              <span className="fw-bold text-primary">${orderSuccess.totalAmount.toFixed(2)}</span>
+              <span className="fw-bold text-primary">₹{orderSuccess.totalAmount.toFixed(2)}</span>
             </div>
             <div className="d-flex justify-content-between small">
               <span className="text-muted">Delivery Address:</span>
@@ -434,7 +478,7 @@ const Checkout = () => {
                     </span>
                     <span className="text-muted small ms-2">x{item.quantity}</span>
                   </div>
-                  <span className="fw-bold text-dark small">${(item.productPrice * item.quantity).toFixed(2)}</span>
+                  <span className="fw-bold text-dark small">₹{(item.productPrice * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -480,12 +524,12 @@ const Checkout = () => {
             <div className="d-flex flex-column gap-2 mb-4 border-top pt-3">
               <div className="d-flex justify-content-between small text-muted">
                 <span>Subtotal:</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               {appliedCoupon && (
                 <div className="d-flex justify-content-between small text-success">
                   <span>Discount:</span>
-                  <span>-${discountAmount.toFixed(2)}</span>
+                  <span>-₹{discountAmount.toFixed(2)}</span>
                 </div>
               )}
               <div className="d-flex justify-content-between small text-muted">
@@ -494,7 +538,7 @@ const Checkout = () => {
               </div>
               <div className="d-flex justify-content-between border-top pt-2">
                 <span className="fw-bold text-dark">Total:</span>
-                <span className="fs-4 fw-bold text-primary">${finalTotal.toFixed(2)}</span>
+                <span className="fs-4 fw-bold text-primary">₹{finalTotal.toFixed(2)}</span>
               </div>
             </div>
 
