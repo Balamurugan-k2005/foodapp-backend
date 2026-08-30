@@ -26,6 +26,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final WishlistRepository wishlistRepository;
 
     public DatabaseSeeder(UserRepository userRepository,
                           CategoryRepository categoryRepository,
@@ -38,7 +39,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                           OrderRepository orderRepository,
                           OrderItemRepository orderItemRepository,
                           CartRepository cartRepository,
-                          CartItemRepository cartItemRepository) {
+                          CartItemRepository cartItemRepository,
+                          WishlistRepository wishlistRepository) {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
@@ -51,21 +53,31 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.orderItemRepository = orderItemRepository;
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
+        this.wishlistRepository = wishlistRepository;
     }
 
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        // Clear old database records to avoid conflicts
         System.out.println(">>> Clearing old database records for food delivery schema...");
+        wishlistRepository.deleteAll();
+        wishlistRepository.flush();
         cartItemRepository.deleteAll();
+        cartItemRepository.flush();
         cartRepository.deleteAll();
+        cartRepository.flush();
         orderItemRepository.deleteAll();
+        orderItemRepository.flush();
         orderRepository.deleteAll();
+        orderRepository.flush();
         reviewRepository.deleteAll();
+        reviewRepository.flush();
         productRepository.deleteAll();
+        productRepository.flush();
         categoryRepository.deleteAll();
+        categoryRepository.flush();
         restaurantRepository.deleteAll();
+        restaurantRepository.flush();
 
         System.out.println(">>> Seeding Food Delivery database with fresh, beautiful sample data...");
 

@@ -110,6 +110,7 @@ public class CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found inside this shopping cart"));
 
         if (quantity <= 0) {
+            cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
             cartItemRepository.delete(cartItem);
         } else {
             if (product.getStock() < quantity) {
@@ -135,6 +136,7 @@ public class CartService {
         CartItem cartItem = cartItemRepository.findByCartAndProduct(cart, product)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found inside this shopping cart"));
 
+        cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
         cartItemRepository.delete(cartItem);
         return getCart(email);
     }
