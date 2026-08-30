@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 
 const UserProfile = () => {
   const { user, setUser } = useAuth();
+  const { showToast, showConfirm } = useNotification();
   
   // Profile edit states
   const [name, setName] = useState('');
@@ -104,16 +106,18 @@ const UserProfile = () => {
     }
   };
 
-  const handleDeleteAddress = async (addressId) => {
-    if (!window.confirm('Delete this shipping address?')) return;
-    try {
-      const res = await axiosInstance.delete(`/api/users/addresses/${addressId}`);
-      if (res.data && res.data.success) {
-        setAddresses(addresses.filter(a => a.id !== addressId));
+  const handleDeleteAddress = (addressId) => {
+    showConfirm('Are you sure you want to delete this shipping address?', async () => {
+      try {
+        const res = await axiosInstance.delete(`/api/users/addresses/${addressId}`);
+        if (res.data && res.data.success) {
+          setAddresses(addresses.filter(a => a.id !== addressId));
+          showToast('Address deleted successfully.', 'success');
+        }
+      } catch (err) {
+        showToast('Failed to delete address.', 'error');
       }
-    } catch (err) {
-      alert('Failed to delete address.');
-    }
+    });
   };
 
   return (

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
+import { useNotification } from '../context/NotificationContext';
 
 const Orders = () => {
+  const { showToast, showConfirm } = useNotification();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState(null);
@@ -23,23 +25,22 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  const handleCancelOrder = async (orderId) => {
-    if (!window.confirm('Are you sure you want to cancel this order? This will restock the items immediately.')) {
-      return;
-    }
-    setCancellingId(orderId);
-    try {
-      const res = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
-      if (res.data && res.data.success) {
-        alert('Order cancelled successfully!');
-        // Update local state status
-        setOrders(orders.map(o => o.id === orderId ? { ...o, status: 'CANCELLED' } : o));
+  const handleCancelOrder = (orderId) => {
+    showConfirm('Are you sure you want to cancel this order? This will restock the items immediately.', async () => {
+      setCancellingId(orderId);
+      try {
+        const res = await axiosInstance.put(`/api/orders/${orderId}/cancel`);
+        if (res.data && res.data.success) {
+          showToast('Order cancelled successfully!', 'success');
+          // Update local state status
+          setOrders(orders.map(o => o.id === orderId ? { ...o, status: 'CANCELLED' } : o));
+        }
+      } catch (err) {
+        showToast(err.message || 'Failed to cancel order.', 'error');
+      } finally {
+        setCancellingId(null);
       }
-    } catch (err) {
-      alert(err.message || 'Failed to cancel order.');
-    } finally {
-      setCancellingId(null);
-    }
+    });
   };
 
   const getStatusBadgeClass = (status) => {
@@ -97,14 +98,14 @@ const Orders = () => {
                       <div className="d-flex align-items-center gap-3">
                         {/* Mock Thumb */}
                         <div className="bg-light rounded-3 p-1 text-center" style={{ width: '45px', height: '45px', overflow: 'hidden' }}>
-                          <i className="bi bi-laptop text-primary fs-5"></i>
+                          <i className="bi bi-egg-fried text-primary fs-5"></i>
                         </div>
                         <div>
                           <h6 className="fw-bold text-dark mb-0 small">{item.productName}</h6>
-                          <span className="text-muted fs-8">Quantity: {item.quantity} | Unit Price: ${item.priceAtPurchase.toFixed(2)}</span>
+                          <span className="text-muted fs-8">Quantity: {item.quantity} | Unit Price: ₹{item.priceAtPurchase.toFixed(2)}</span>
                         </div>
                       </div>
-                      <span className="fw-bold text-dark small">${(item.priceAtPurchase * item.quantity).toFixed(2)}</span>
+                      <span className="fw-bold text-dark small">₹{(item.priceAtPurchase * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -114,7 +115,7 @@ const Orders = () => {
               <div className="bg-white p-3 border-top d-flex justify-content-between align-items-center">
                 <div>
                   <span className="text-muted small">Total Paid: </span>
-                  <span className="fs-5 fw-bold text-primary">${order.totalAmount.toFixed(2)}</span>
+                  <span className="fs-5 fw-bold text-primary">₹{order.totalAmount.toFixed(2)}</span>
                 </div>
 
                 {order.status === 'PENDING' && (

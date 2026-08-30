@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api/axiosInstance';
+import { useNotification } from '../../context/NotificationContext';
 
 const AdminDashboard = () => {
+  const { showToast, showConfirm } = useNotification();
   const [activeTab, setActiveTab] = useState('overview');
 
   // Universal Loading states
@@ -146,10 +148,10 @@ const AdminDashboard = () => {
     try {
       if (editingProduct) {
         await axiosInstance.put(`/api/products/${editingProduct.id}`, payload);
-        alert('Product updated successfully!');
+        showToast('Product updated successfully!', 'success');
       } else {
         await axiosInstance.post('/api/products', payload);
-        alert('Product created successfully!');
+        showToast('Product created successfully!', 'success');
       }
       setShowProductForm(false);
       setEditingProduct(null);
@@ -162,7 +164,7 @@ const AdminDashboard = () => {
       setPCategoryId('');
       loadProducts();
     } catch (err) {
-      alert(err.message || 'Product validation failed');
+      showToast(err.message || 'Product validation failed', 'error');
     }
   };
 
@@ -177,15 +179,16 @@ const AdminDashboard = () => {
     setShowProductForm(true);
   };
 
-  const handleDeleteProduct = async (prodId) => {
-    if (!window.confirm('Are you sure you want to soft-delete this product?')) return;
-    try {
-      await axiosInstance.delete(`/api/products/${prodId}`);
-      alert('Product soft-deleted successfully!');
-      loadProducts();
-    } catch (err) {
-      alert('Failed to delete product.');
-    }
+  const handleDeleteProduct = (prodId) => {
+    showConfirm('Are you sure you want to soft-delete this product?', async () => {
+      try {
+        await axiosInstance.delete(`/api/products/${prodId}`);
+        showToast('Product soft-deleted successfully!', 'success');
+        loadProducts();
+      } catch (err) {
+        showToast('Failed to delete product.', 'error');
+      }
+    });
   };
 
   // Category submit handler
@@ -193,12 +196,12 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       await axiosInstance.post('/api/categories', { name: cName, description: cDescription });
-      alert('Category added successfully!');
+      showToast('Category added successfully!', 'success');
       setCName('');
       setCDescription('');
       loadCategories();
     } catch (err) {
-      alert('Failed to add category.');
+      showToast('Failed to add category.', 'error');
     }
   };
 
@@ -212,14 +215,14 @@ const AdminDashboard = () => {
         expiryDate: cpExpiry,
         minOrderAmount: cpMinAmount ? parseFloat(cpMinAmount) : null
       });
-      alert('Coupon created successfully!');
+      showToast('Coupon created successfully!', 'success');
       setCpCode('');
       setCpDiscount('');
       setCpExpiry('');
       setCpMinAmount('');
       loadCoupons();
     } catch (err) {
-      alert('Failed to create coupon.');
+      showToast('Failed to create coupon.', 'error');
     }
   };
 
@@ -227,8 +230,9 @@ const AdminDashboard = () => {
     try {
       await axiosInstance.put(`/api/coupons/${couponId}/toggle?active=${!currentActive}`);
       loadCoupons();
+      showToast('Coupon status updated!', 'success');
     } catch (err) {
-      alert('Failed to toggle coupon status.');
+      showToast('Failed to toggle coupon status.', 'error');
     }
   };
 
@@ -236,10 +240,10 @@ const AdminDashboard = () => {
   const handleOrderStatusUpdate = async (orderId, newStatus) => {
     try {
       await axiosInstance.put(`/api/admin/orders/${orderId}/status?status=${newStatus}`);
-      alert('Order status updated!');
+      showToast('Order status updated!', 'success');
       loadOrders();
     } catch (err) {
-      alert('Failed to update order status.');
+      showToast('Failed to update order status.', 'error');
     }
   };
 

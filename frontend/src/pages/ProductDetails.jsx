@@ -3,11 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 
 const ProductDetails = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
   const { user, isAdmin } = useAuth();
+  const { showToast } = useNotification();
   
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -48,17 +50,16 @@ const ProductDetails = () => {
 
   const handleAddToCart = async () => {
     if (!user) {
-      alert('Please log in to add items.');
+      showToast('Please log in to add items.', 'warning');
       return;
     }
     setAdding(true);
     setSuccessMsg('');
     try {
       await addToCart(product.id, quantity);
-      setSuccessMsg(`Added ${quantity} item(s) to cart!`);
-      setTimeout(() => setSuccessMsg(''), 3000);
+      showToast(`Added ${quantity} item(s) to cart!`, 'success');
     } catch (err) {
-      alert(err.message || 'Failed to add items to cart');
+      showToast(err.message || 'Failed to add items to cart', 'error');
     } finally {
       setAdding(false);
     }
@@ -166,7 +167,7 @@ const ProductDetails = () => {
 
               {/* Price */}
               <div className="mb-4">
-                <span className="fs-2 fw-bold text-primary">${product.price.toFixed(2)}</span>
+                <span className="fs-2 fw-bold text-primary">₹{product.price.toFixed(2)}</span>
               </div>
 
               {/* Description */}
