@@ -26,6 +26,8 @@ const Login = () => {
       // Redirect based on role
       if (data.role === 'ADMIN') {
         navigate('/admin');
+      } else if (data.role === 'RESTAURANT_OWNER') {
+        navigate('/owner');
       } else {
         navigate(from, { replace: true });
       }
@@ -41,9 +43,9 @@ const Login = () => {
     <div className="container-fluid auth-bg d-flex align-items-center justify-content-center" style={{ minHeight: '90vh' }}>
       <div className="card shadow-lg border-0 p-4 m-3" style={{ width: '100%', maxWidth: '450px', borderRadius: '16px' }}>
         <div className="text-center mb-4">
-          <i className="bi bi-cpu text-primary fs-1"></i>
+          <i className="bi bi-bicycle text-primary fs-1"></i>
           <h2 className="fw-bold mt-2 text-dark">Welcome Back</h2>
-          <p className="text-muted small">Sign in to your NexuraShop account</p>
+          <p className="text-muted small">Sign in to your BiteSpeed account</p>
         </div>
 
         {error && (
