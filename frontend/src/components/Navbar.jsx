@@ -17,8 +17,8 @@ const Navbar = ({ onCartOpen }) => {
     <nav className="navbar navbar-expand-lg navbar-light sticky-top glass-nav py-3">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center fw-bold text-dark fs-4" to="/">
-          <i className="bi bi-cpu text-primary me-2 fs-3"></i>
-          <span>Nexura<span className="text-primary">Shop</span></span>
+          <i className="bi bi-bicycle text-primary me-2 fs-3"></i>
+          <span>Bite<span className="text-primary">Speed</span></span>
         </Link>
         
         <button
@@ -37,7 +37,7 @@ const Navbar = ({ onCartOpen }) => {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
             <li className="nav-item">
               <Link className="nav-link text-dark fw-semibold" to="/">
-                Browse Products
+                Browse Restaurants
               </Link>
             </li>
           </ul>
@@ -45,7 +45,7 @@ const Navbar = ({ onCartOpen }) => {
           <div className="d-flex align-items-center gap-3">
             {isAuthenticated ? (
               <>
-                {!isAdmin && (
+                {!isAdmin && user.role !== 'RESTAURANT_OWNER' && (
                   <>
                     <Link to="/wishlist" className="btn btn-light rounded-circle position-relative p-2" title="Wishlist">
                       <i className="bi bi-heart fs-5 text-danger"></i>
@@ -84,6 +84,19 @@ const Navbar = ({ onCartOpen }) => {
                           <i className="bi bi-speedometer2 me-2"></i>Admin Dashboard
                         </Link>
                       </li>
+                    ) : user.role === 'RESTAURANT_OWNER' ? (
+                      <>
+                        <li>
+                          <Link className="dropdown-item rounded" to="/owner">
+                            <i className="bi bi-speedometer2 me-2"></i>Owner Dashboard
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item rounded" to="/profile">
+                            <i className="bi bi-person me-2"></i>My Profile
+                          </Link>
+                        </li>
+                      </>
                     ) : (
                       <>
                         <li>

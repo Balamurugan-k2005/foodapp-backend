@@ -1,6 +1,6 @@
 /* Modern Custom E-Commerce CSS Tokens */
 :root {
-  --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --primary-gradient: linear-gradient(135deg, #e53935 0%, #c62828 100%);
   --secondary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   --accent-color: #f59e0b;
   --bg-soft: #f8fafc;
@@ -85,3 +85,34 @@ body {
 .auth-bg {
   background: radial-gradient(circle at 10% 20%, rgba(216, 241, 230, 0.46) 0.1%, rgba(233, 226, 226, 0.28) 90.1%);
 }
+
+/* Override Bootstrap primary colors with BiteSpeed food red */
+.text-primary {
+  color: #e53935 !important;
+}
+.bg-primary {
+  background-color: #e53935 !important;
+}
+.btn-primary {
+  background-color: #e53935 !important;
+  border-color: #e53935 !important;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: #c62828 !important;
+  border-color: #c62828 !important;
+}
+.btn-outline-primary {
+  color: #e53935 !important;
+  border-color: #e53935 !important;
+}
+.btn-outline-primary:hover {
+  background-color: #e53935 !important;
+  color: white !important;
+}
+.badge.bg-primary {
+  background-color: #e53935 !important;
+}
+.border-primary {
+  border-color: #e53935 !important;
+}
+
